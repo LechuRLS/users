@@ -1,13 +1,39 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
-  margin: 0;
-  padding: 20px;
+  text-align: center;
 }
 
 h1 {
-  text-align: center;
   color: #333;
+}
+
+#listaUsuarios {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.usuario-card {
+  background: white;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  text-align: left;
+}
+
+.usuario-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.usuario-info {
+  padding: 10px;
 }
 
 
