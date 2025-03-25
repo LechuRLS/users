@@ -1,40 +1,58 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const listaUsuarios = document.getElementById("listaUsuarios");
+const endPoint = "https://jsonplaceholder.typicode.com/users"
+const listaUsuarios = document.getElementById("listaUsuarios")
+const minAge = 18
+const maxAge = 65
+const getAgeRandom = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
-    fetch("https://jsonplaceholder.typicode.com/users")
-        .then(response => response.json())
-        .then(usuarios => {
-            const usuariosModificados = usuarios.map(({ id, name, username, email, phone, company, address }) => {
-                const edadAleatoria = Math.floor(Math.random() * (60 - 18 + 1)) + 18;
-                const imgSrc = `./assets/img/${id}.jpeg`;
-                
-                return {
-                    ...{ id, name, username, email, phone },
-                    age: edadAleatoria,
-                    img: imgSrc,
-                    company: company.name,
-                    address: `${address.street}, ${address.suite}, ${address.city}`
-                };
-            });
 
-            usuariosModificados.forEach(({ name, age, username, img, phone, email, company, address }) => {
-                const li = document.createElement("li");
-                li.classList.add("usuario-card");
-                li.innerHTML = `
-                    <img src="${img}" alt="${name}">
-                    <div class="usuario-info">
-                        <strong>Nombre:</strong> ${name} <br>
-                        <strong>Edad:</strong> ${age} años <br>
-                        <strong>Usuario:</strong> ${username} <br>
-                        <strong>Email:</strong> ${email} <br>
-                        <strong>Teléfono:</strong> ${phone} <br>
-                        <strong>Compañía:</strong> ${company} <br>
-                        <strong>Dirección:</strong> ${address} <br>
-                    </div>
-                `;
-                listaUsuarios.appendChild(li);
-            });
-        })
-        .catch(error => console.error("Error al obtener los usuarios:", error));
-});
+function getUsers () {
+  return fetch(endPoint)
+  .then(response => {
+    if(!response.ok) {
+      throw new Error(`Error: ${response.status}`)
+    }
+    return response.json()
+  })
+}
 
+getUsers().then(users => {
+  const results = users.map(user => {
+    const { id } = user
+    const { street, suite, city } = user.address
+    const newUser = {
+      ...user,
+      age: getAgeRandom(minAge, maxAge),
+      img: `../assets/img/${id}.jpeg`,
+      address: `${city} ${street} ${suite}`
+    }
+
+    const {name, img, age, address, username, phone, email} = newUser
+    return template(name, img, age, address, username, phone, email)
+  });
+  listaUsuarios.innerHTML = results.join("")
+
+
+}).catch(err => console.error(err))
+
+function template (name, img, age, address, username, phone, email) {
+  return `
+    <li>
+    <div class="container">
+      <div class="info">
+        <h2>name: ${name}</h2>
+        <p>username: ${username}</p>
+        <p>age: ${age}</p>
+        <p>phone: ${phone}</p>
+        <p>email: ${email}</p>
+      </div>
+      <div class="image">
+        <img src=${img} alt=${name} />
+      </div>
+
+    </div>
+    
+      <p>address: ${address}</p>
+    
+    </li>
+    `
+}
